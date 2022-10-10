@@ -2,18 +2,31 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
 import { Stack, Button } from "@react-native-material/core";
 import ItemList from './common/ItemList';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+
 
 export default function App() {
   const [value, setValue] = useState("");
+  const [valueUpdate, setValueUpdate] = useState("")
   const [list, setList] = useState([]);
   const handleAdd=()=>{
+    // console.log(valueUpdate);
+    if(valueUpdate !== ""){
+      // handleUpdateText(value)
+      setList([].concat(list.map((x, index) => {
+            return index == valueUpdate ? value : x;
+           })))
+      console.log("uopdate");
+      setValueUpdate("")
+    } else{
+      setList([...list,value])
+      setValue("")
+    }
     // list.push(value);
     // setList(list)
     // console.log(list);
     // setValue("")
-    setList([...list,value])
-    setValue("")
+   
   }
 
   const handleDelete=(index)=>{
@@ -22,11 +35,29 @@ export default function App() {
     })
     setList(a)
     console.log(list);
-  
   }
+
+  const handleUpdate=(index)=>{
+    console.log(index);
+    setValueUpdate(index)
+    console.log(list[index]);
+    // setValueUpdate(list[index])
+  }
+  useEffect(() => {
+    // console.log(valueUpdate.name);
+    setValue(list[valueUpdate])
+  }, [valueUpdate])
+  
+  // const handleUpdateText = () => {
+  //   console.log(valueUpdate);
+  //   // setList([].concat(list.map((x, index) => {
+  //   //   return index == valueUpdate.index ? value : x;
+  //   //  })))
+  //   // setValueUpdate(null)
+  // }
   return (
     <View style={styles.container}>
-      <TextInput
+      <TextInput 
         style={{width:300, height:50, borderWidth:1, borderColor:"#ccc",paddingLeft:20}}
         placeholder="Nhap Mon hoc"
         onChangeText={(value) => setValue(value)}
@@ -43,6 +74,7 @@ export default function App() {
                 <Text style={{fontSize:20, color:"#fff"}}>{e}</Text>
               </View>
               <Button style={{width:90}} title="DELETE" onPress={()=>handleDelete(index)} />
+              <Button style={{width:90}} title="UPDATE" onPress={()=>handleUpdate(index)} />
             </View>
             )
           })
